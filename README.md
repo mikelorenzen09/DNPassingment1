@@ -1,0 +1,1 @@
+A .NET forum application built in stages: starting from in-memory repositories, then layering on a REST API, a Blazor front-end, authentication, and persistence with Entity Framework Core and SQLite. Actively under development.
