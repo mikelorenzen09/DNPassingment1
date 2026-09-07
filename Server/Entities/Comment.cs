@@ -6,4 +6,5 @@ public class Comment
     public int UserID { get; set; }
     public int PostID { get; set; }
     public int CommentID { get; set; }
+    
 }

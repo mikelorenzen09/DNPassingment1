@@ -3,7 +3,13 @@ using Entities;
 using RepositoryContracts;
 public class PostInMemoryRepository : IPostRepository
 {
-    private List<Post> posts = new();
+    private readonly List<Post> posts = new();
+    public PostInMemoryRepository()
+    {
+        posts.Add(new Post { PostID = 1, Title = "Welcome to the forum", Body = "This is the first post!", UserID = 1 });
+        posts.Add(new Post { PostID = 2, Title = "Async programming tips", Body = "Always await your tasks.", UserID = 2 });
+        posts.Add(new Post { PostID = 3, Title = "C# best practices", Body = "Use meaningful names.", UserID = 3 });
+    }
     
     public Task<Post> AddAsync(Post post)
     {
