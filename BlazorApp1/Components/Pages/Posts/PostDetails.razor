@@ -1,0 +1,121 @@
+@page "/posts/{PostId:int}"
+@inject IPostService PostService
+@inject IUserService UserService
+@inject ICommentService CommentService
+
+<PageTitle>Post</PageTitle>
+
+@if (errorMessage is not null)
+{
+    <p class="text-danger">@errorMessage</p>
+}
+else if (post is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h1>@post.Title</h1>
+    <p class="text-muted">by @authorName</p>
+    <p>@post.Body</p>
+
+    <h3>Comments</h3>
+    @if (comments is null || comments.Count == 0)
+    {
+        <p>No comments yet.</p>
+    }
+    else
+    {
+        <ul class="list-group mb-3">
+            @foreach (CommentDto comment in comments)
+            {
+                <li class="list-group-item">
+                    <strong>@GetAuthorName(comment.UserID):</strong> @comment.Body
+                </li>
+            }
+        </ul>
+    }
+
+    <h4>Add a comment</h4>
+    <div class="mb-3">
+        <textarea class="form-control" @bind="newCommentBody"></textarea>
+    </div>
+    <button class="btn btn-primary" @onclick="AddComment">Add comment</button>
+
+    @if (!string.IsNullOrEmpty(commentError))
+    {
+        <p class="text-danger mt-3">@commentError</p>
+    }
+}
+
+@code {
+    [Parameter]
+    public int PostId { get; set; }
+
+    private PostDto? post;
+    private List<CommentDto>? comments;
+    private Dictionary<int, string> usernamesById = new();
+    private string authorName = "";
+    private string newCommentBody = "";
+    private string? errorMessage;
+    private string? commentError;
+
+    // No login system yet (see assignment Step 5.3) - new comments are hardcoded to user id 1.
+    private const int CurrentUserId = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        try
+        {
+            List<UserDto> users = await UserService.GetUsersAsync();
+            usernamesById = users.ToDictionary(u => u.UserID, u => u.Username);
+
+            post = await PostService.GetPostAsync(PostId);
+            authorName = GetAuthorName(post.UserID);
+
+            comments = await CommentService.GetCommentsForPostAsync(PostId);
+        }
+        catch (Exception e)
+        {
+            errorMessage = e.Message;
+        }
+    }
+
+    private async Task AddComment()
+    {
+        commentError = null;
+
+        if (string.IsNullOrWhiteSpace(newCommentBody))
+        {
+            commentError = "Comment can't be empty.";
+            return;
+        }
+
+        try
+        {
+            await CommentService.AddCommentAsync(new CreateCommentDto
+            {
+                Body = newCommentBody,
+                UserID = CurrentUserId,
+                PostID = PostId
+            });
+
+            newCommentBody = "";
+            comments = await CommentService.GetCommentsForPostAsync(PostId);
+        }
+        catch (Exception e)
+        {
+            commentError = e.Message;
+        }
+    }
+
+    private string GetAuthorName(int userId)
+    {
+        return usernamesById.TryGetValue(userId, out string? name) ? name : $"user #{userId}";
+    }
+}

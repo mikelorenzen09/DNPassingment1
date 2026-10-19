@@ -1,0 +1,60 @@
+@page "/posts"
+@inject IPostService PostService
+@inject IUserService UserService
+
+<PageTitle>Posts</PageTitle>
+
+<h1>Posts</h1>
+
+<p><a class="btn btn-primary" href="/posts/create">Create new post</a></p>
+
+@if (errorMessage is not null)
+{
+    <p class="text-danger">@errorMessage</p>
+}
+else if (posts is null)
+{
+    <p>Loading...</p>
+}
+else if (posts.Count == 0)
+{
+    <p>No posts yet.</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (PostDto post in posts)
+        {
+            <li class="list-group-item">
+                <a href="@($"/posts/{post.PostID}")">@post.Title</a>
+                <small class="text-muted"> — by @GetAuthorName(post.UserID)</small>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<PostDto>? posts;
+    private Dictionary<int, string> usernamesById = new();
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            List<UserDto> users = await UserService.GetUsersAsync();
+            usernamesById = users.ToDictionary(u => u.UserID, u => u.Username);
+
+            posts = await PostService.GetPostsAsync();
+        }
+        catch (Exception e)
+        {
+            errorMessage = e.Message;
+        }
+    }
+
+    private string GetAuthorName(int userId)
+    {
+        return usernamesById.TryGetValue(userId, out string? name) ? name : $"user #{userId}";
+    }
+}
