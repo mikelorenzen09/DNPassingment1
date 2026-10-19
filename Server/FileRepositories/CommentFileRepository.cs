@@ -1,4 +1,4 @@
-﻿namespace FileRepositories;
+namespace FileRepositories;
 
 using Entities;
 using RepositoryContracts;
@@ -27,7 +27,7 @@ public class CommentFileRepository : ICommentRepository
         await File.WriteAllTextAsync(filePath, commentsAsJson);
         return comment;
     }
-    
+
     public async Task<Comment> GetSingleAsync(int id)
     {
         string commentsAsJson = await File.ReadAllTextAsync(filePath);
@@ -36,11 +36,11 @@ public class CommentFileRepository : ICommentRepository
         Comment? comment = comments.SingleOrDefault(c => c.CommentID == id);
         if (comment is null)
         {
-            throw new InvalidOperationException($"Comment with ID '{id}' not found");
+            throw new NotFoundException($"Comment with ID '{id}' not found");
         }
         return comment;
     }
-    
+
     public IQueryable<Comment> GetMany()
     {
         string commentsAsJson = File.ReadAllTextAsync(filePath).Result;
@@ -53,32 +53,32 @@ public class CommentFileRepository : ICommentRepository
     {
         string commentsAsJson = File.ReadAllTextAsync(filePath).Result;
         List<Comment> comments = JsonSerializer.Deserialize<List<Comment>>(commentsAsJson)!;
-        
+
         Comment? existingComment = comments.SingleOrDefault(c => c.CommentID == comment.CommentID);
         if (existingComment is null)
             {
-            throw new InvalidOperationException($"Comment with ID '{comment.CommentID}' not found");
+            throw new NotFoundException($"Comment with ID '{comment.CommentID}' not found");
             }
         comments.Remove(existingComment);
         comments.Add(comment);
-        
+
         commentsAsJson = JsonSerializer.Serialize(comments);
         await File.WriteAllTextAsync(filePath, commentsAsJson);
     }
-    
-    
+
+
     public async Task DeleteAsync(int id)
     {
         string commentsAsJson = await File.ReadAllTextAsync(filePath);
         List<Comment> comments = JsonSerializer.Deserialize<List<Comment>>(commentsAsJson)!;
-        
+
         Comment? deletedComment = comments.SingleOrDefault(c => c.CommentID == id);
         if (deletedComment is null)
             {
-            throw new InvalidOperationException($"Comment with ID '{id}' not found");
+            throw new NotFoundException($"Comment with ID '{id}' not found");
             }
         comments.Remove(deletedComment);
-        
+
         commentsAsJson = JsonSerializer.Serialize(comments);
         await File.WriteAllTextAsync(filePath, commentsAsJson);
     }

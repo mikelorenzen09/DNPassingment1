@@ -1,4 +1,4 @@
-﻿namespace FileRepositories;
+namespace FileRepositories;
 
 using Entities;
 using RepositoryContracts;
@@ -36,7 +36,7 @@ public class UserFileRepository : IUserRepository
         User? user = users.SingleOrDefault(u => u.UserID == id);
         if (user is null)
         {
-            throw new InvalidOperationException($"User with ID '{id}' not found");
+            throw new NotFoundException($"User with ID '{id}' not found");
         }
         return user;
     }
@@ -56,7 +56,7 @@ public class UserFileRepository : IUserRepository
         User? existingUser = users.SingleOrDefault(u => u.UserID == user.UserID);
         if (existingUser is null)
         {
-            throw new InvalidOperationException($"User with ID '{user.UserID}' not found");
+            throw new NotFoundException($"User with ID '{user.UserID}' not found");
         }
         users.Remove(existingUser);
         users.Add(user);
@@ -73,7 +73,7 @@ public class UserFileRepository : IUserRepository
         User? deletedUser = users.SingleOrDefault(u => u.UserID == id);
         if (deletedUser is null)
         {
-            throw new InvalidOperationException($"User with ID '{id}' not found");
+            throw new NotFoundException($"User with ID '{id}' not found");
         }
         users.Remove(deletedUser);
 

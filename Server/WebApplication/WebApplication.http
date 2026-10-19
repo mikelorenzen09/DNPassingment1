@@ -1,0 +1,108 @@
+@WebApplication_HostAddress = http://localhost:5262
+
+### Create a user
+POST {{WebApplication_HostAddress}}/Users
+Content-Type: application/json
+
+{
+  "username": "alice",
+  "password": "hunter2"
+}
+
+### Get all users
+GET {{WebApplication_HostAddress}}/Users
+Accept: application/json
+
+### Get users whose username contains "ali"
+GET {{WebApplication_HostAddress}}/Users?username=ali
+Accept: application/json
+
+### Get a single user (change the id to one that exists)
+GET {{WebApplication_HostAddress}}/Users/1
+Accept: application/json
+
+### Update a user (change the id to one that exists)
+PUT {{WebApplication_HostAddress}}/Users/1
+Content-Type: application/json
+
+{
+  "username": "alice2",
+  "password": "hunter3"
+}
+
+### Delete a user (change the id to one that exists)
+DELETE {{WebApplication_HostAddress}}/Users/1
+
+### Create a post (userID must reference an existing user)
+POST {{WebApplication_HostAddress}}/Posts
+Content-Type: application/json
+
+{
+  "title": "My first post",
+  "body": "Hello forum!",
+  "userID": 1
+}
+
+### Get all posts
+GET {{WebApplication_HostAddress}}/Posts
+Accept: application/json
+
+### Get posts filtered by title / author
+GET {{WebApplication_HostAddress}}/Posts?title=first&authorId=1
+Accept: application/json
+
+### Get a single post (change the id to one that exists)
+GET {{WebApplication_HostAddress}}/Posts/1
+Accept: application/json
+
+### Update a post (change the id to one that exists)
+PUT {{WebApplication_HostAddress}}/Posts/1
+Content-Type: application/json
+
+{
+  "title": "My first post (edited)",
+  "body": "Hello forum, updated!",
+  "userID": 1
+}
+
+### Get comments belonging to a post (nested route)
+GET {{WebApplication_HostAddress}}/Posts/1/comments
+Accept: application/json
+
+### Delete a post (change the id to one that exists)
+DELETE {{WebApplication_HostAddress}}/Posts/1
+
+### Create a comment (userID and postID must reference existing rows)
+POST {{WebApplication_HostAddress}}/Comments
+Content-Type: application/json
+
+{
+  "body": "Nice post!",
+  "userID": 1,
+  "postID": 1
+}
+
+### Get all comments
+GET {{WebApplication_HostAddress}}/Comments
+Accept: application/json
+
+### Get comments filtered by post
+GET {{WebApplication_HostAddress}}/Comments?postId=1
+Accept: application/json
+
+### Get a single comment (change the id to one that exists)
+GET {{WebApplication_HostAddress}}/Comments/1
+Accept: application/json
+
+### Update a comment (change the id to one that exists)
+PUT {{WebApplication_HostAddress}}/Comments/1
+Content-Type: application/json
+
+{
+  "body": "Nice post! (edited)",
+  "userID": 1,
+  "postID": 1
+}
+
+### Delete a comment (change the id to one that exists)
+DELETE {{WebApplication_HostAddress}}/Comments/1

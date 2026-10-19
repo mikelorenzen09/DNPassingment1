@@ -1,4 +1,4 @@
-﻿namespace FileRepositories;
+namespace FileRepositories;
 
 using Entities;
 using RepositoryContracts;
@@ -36,7 +36,7 @@ public class PostFileRepository : IPostRepository
         Post? post = posts.SingleOrDefault(p => p.PostID == id);
         if (post is null)
         {
-            throw new InvalidOperationException($"Post with ID '{id}' not found");
+            throw new NotFoundException($"Post with ID '{id}' not found");
         }
         return post;
     }
@@ -56,7 +56,7 @@ public class PostFileRepository : IPostRepository
         Post? existingPost = posts.SingleOrDefault(c => c.PostID == post.PostID);
         if (existingPost is null)
         {
-            throw new InvalidOperationException($"Post with ID '{post.PostID}' not found");
+            throw new NotFoundException($"Post with ID '{post.PostID}' not found");
         }
         posts.Remove(existingPost);
         posts.Add(post);
@@ -73,7 +73,7 @@ public class PostFileRepository : IPostRepository
         Post? deletedPost = posts.SingleOrDefault(c => c.PostID == id);
         if (deletedPost is null)
         {
-            throw new InvalidOperationException($"Post with ID '{id}' not found");
+            throw new NotFoundException($"Post with ID '{id}' not found");
         }
         posts.Remove(deletedPost);
 
