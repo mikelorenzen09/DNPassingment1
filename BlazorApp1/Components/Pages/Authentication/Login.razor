@@ -1,0 +1,58 @@
+@page "/login"
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager Navigation
+
+<PageTitle>Log in</PageTitle>
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h3>Please log in</h3>
+
+        <div class="mb-3">
+            <label>Username</label>
+            <input class="form-control" @bind="username"/>
+        </div>
+        <div class="mb-3">
+            <label>Password</label>
+            <input type="password" class="form-control" @bind="password"/>
+        </div>
+
+        <button class="btn btn-primary" @onclick="LoginAsync">Log in</button>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <p class="text-danger mt-3">@errorMessage</p>
+        }
+    </NotAuthorized>
+    <Authorized>
+        <h3>Hello, @context.User.Identity?.Name</h3>
+        <p>You are already logged in.</p>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private string username = "";
+    private string password = "";
+    private string? errorMessage;
+
+    private async Task LoginAsync()
+    {
+        errorMessage = null;
+
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            errorMessage = "Username and password are required.";
+            return;
+        }
+
+        try
+        {
+            await ((SimpleAuthProvider)AuthProvider).Login(username, password);
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception e)
+        {
+            errorMessage = e.Message;
+        }
+    }
+}
