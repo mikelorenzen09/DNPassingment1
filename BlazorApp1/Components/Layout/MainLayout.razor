@@ -7,6 +7,15 @@
 
     <main>
         <div class="top-row px-4">
+            <AuthorizeView>
+                <Authorized>
+                    Logged in as <strong>@context.User.Identity?.Name</strong>
+                    <button class="btn btn-link" @onclick="LogoutAsync">Log out</button>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="login">Log in</a>
+                </NotAuthorized>
+            </AuthorizeView>
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
         </div>
 
@@ -21,3 +30,12 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    [Inject] private AuthenticationStateProvider AuthProvider { get; set; } = default!;
+
+    private async Task LogoutAsync()
+    {
+        await ((SimpleAuthProvider)AuthProvider).Logout();
+    }
+}

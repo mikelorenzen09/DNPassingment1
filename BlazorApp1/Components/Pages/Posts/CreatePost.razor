@@ -6,30 +6,49 @@
 
 <h1>Create a new post</h1>
 
-<div class="mb-3">
-    <label>Title</label>
-    <input class="form-control" @bind="title"/>
-</div>
-<div class="mb-3">
-    <label>Body</label>
-    <textarea class="form-control" @bind="body"></textarea>
-</div>
+<AuthorizeView>
+    <NotAuthorized>
+        <p class="text-danger">You must be logged in to create a post. <a href="login">Log in</a></p>
+    </NotAuthorized>
+    <Authorized>
+        <div class="mb-3">
+            <label>Title</label>
+            <input class="form-control" @bind="title"/>
+        </div>
+        <div class="mb-3">
+            <label>Body</label>
+            <textarea class="form-control" @bind="body"></textarea>
+        </div>
 
-<button class="btn btn-primary" @onclick="Submit">Create post</button>
+        <button class="btn btn-primary" @onclick="Submit">Create post</button>
 
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-    <p class="text-danger mt-3">@errorMessage</p>
-}
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <p class="text-danger mt-3">@errorMessage</p>
+        }
+    </Authorized>
+</AuthorizeView>
 
 @code {
+    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
+
     private string title = "";
     private string body = "";
     private string? errorMessage;
+    private int currentUserId;
 
-    // No login system yet (see assignment Step 5.3) - new posts are hardcoded to user id 1.
-    // Make sure you have created a user with id 1 first (Add User page).
-    private const int CurrentUserId = 1;
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthState is not null)
+        {
+            AuthenticationState state = await AuthState;
+            string? idClaim = state.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (idClaim is not null)
+            {
+                currentUserId = int.Parse(idClaim);
+            }
+        }
+    }
 
     private async Task Submit()
     {
@@ -47,7 +66,7 @@
             {
                 Title = title,
                 Body = body,
-                UserID = CurrentUserId
+                UserID = currentUserId
             });
 
             Navigation.NavigateTo($"/posts/{created.PostID}");
