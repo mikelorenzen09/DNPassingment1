@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "api",
+      "runtimeExecutable": "C:\\Users\\mikea\\.dotnet\\dotnet.exe",
+      "runtimeArgs": ["run", "--project", "Server/WebApplication", "--launch-profile", "http"],
+      "port": 5262
+    },
+    {
+      "name": "blazor",
+      "runtimeExecutable": "C:\\Users\\mikea\\.dotnet\\dotnet.exe",
+      "runtimeArgs": ["run", "--project", "BlazorApp1", "--launch-profile", "http"],
+      "port": 5115
+    }
+  ]
+}
