@@ -9,14 +9,16 @@
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    Logged in as <strong>@context.User.Identity?.Name</strong>
-                    <button class="btn btn-link" @onclick="LogoutAsync">Log out</button>
+                    <div class="user-chip">
+                        <span class="avatar avatar-sm">@UiHelpers.Initial(context.User.Identity?.Name)</span>
+                        <span>Signed in as <strong>@context.User.Identity?.Name</strong></span>
+                    </div>
+                    <button class="btn btn-ghost btn-sm" @onclick="LogoutAsync">Log out</button>
                 </Authorized>
                 <NotAuthorized>
-                    <a href="login">Log in</a>
+                    <a class="btn btn-primary btn-sm" href="login">Log in</a>
                 </NotAuthorized>
             </AuthorizeView>
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
         </div>
 
         <article class="content px-4">

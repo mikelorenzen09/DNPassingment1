@@ -6,27 +6,37 @@
 
 <AuthorizeView>
     <NotAuthorized>
-        <h3>Please log in</h3>
+        <div class="panel form-panel mt-2">
+            <h1 class="mb-4"><span class="page-title">Log in</span></h1>
 
-        <div class="mb-3">
-            <label>Username</label>
-            <input class="form-control" @bind="username"/>
+            <div class="mb-3">
+                <label>Username</label>
+                <input class="form-control" @bind="username" placeholder="Your username"/>
+            </div>
+            <div class="mb-3">
+                <label>Password</label>
+                <input type="password" class="form-control" @bind="password" placeholder="••••••••"/>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary w-100" @onclick="LoginAsync">Log in</button>
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert-error">@errorMessage</div>
+            }
+
+            <p class="muted-note">No account yet? <a href="users/add">Create one</a></p>
         </div>
-        <div class="mb-3">
-            <label>Password</label>
-            <input type="password" class="form-control" @bind="password"/>
-        </div>
-
-        <button class="btn btn-primary" @onclick="LoginAsync">Log in</button>
-
-        @if (!string.IsNullOrEmpty(errorMessage))
-        {
-            <p class="text-danger mt-3">@errorMessage</p>
-        }
     </NotAuthorized>
     <Authorized>
-        <h3>Hello, @context.User.Identity?.Name</h3>
-        <p>You are already logged in.</p>
+        <div class="panel form-panel mt-2 text-center">
+            <span class="avatar avatar-lg mb-3">@UiHelpers.Initial(context.User.Identity?.Name)</span>
+            <h2>Hello, @context.User.Identity?.Name</h2>
+            <p class="lede mb-4">You are already logged in.</p>
+            <a class="btn btn-primary" href="posts">Go to posts</a>
+        </div>
     </Authorized>
 </AuthorizeView>
 

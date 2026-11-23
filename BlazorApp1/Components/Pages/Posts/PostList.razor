@@ -4,30 +4,47 @@
 
 <PageTitle>Posts</PageTitle>
 
-<h1>Posts</h1>
-
-<p><a class="btn btn-primary" href="/posts/create">Create new post</a></p>
+<div class="page-header">
+    <div>
+        <h1><span class="page-title">Posts</span></h1>
+        @if (posts is not null)
+        {
+            <p class="lede">@posts.Count @(posts.Count == 1 ? "post" : "posts") so far.</p>
+        }
+    </div>
+    <a class="btn btn-primary" href="/posts/create">Write a post</a>
+</div>
 
 @if (errorMessage is not null)
 {
-    <p class="text-danger">@errorMessage</p>
+    <div class="alert-error">@errorMessage</div>
 }
 else if (posts is null)
 {
-    <p>Loading...</p>
+    <p class="loading">Loading posts...</p>
 }
 else if (posts.Count == 0)
 {
-    <p>No posts yet.</p>
+    <div class="empty-state">
+        <strong>No posts yet</strong>
+        Be the first to write something.
+    </div>
 }
 else
 {
-    <ul class="list-group">
+    <ul class="post-list">
         @foreach (PostDto post in posts)
         {
-            <li class="list-group-item">
-                <a href="@($"/posts/{post.PostID}")">@post.Title</a>
-                <small class="text-muted"> — by @GetAuthorName(post.UserID)</small>
+            string author = GetAuthorName(post.UserID);
+            <li>
+                <a class="post-row" href="@($"/posts/{post.PostID}")">
+                    <h2>@post.Title</h2>
+                    <p>@post.Body</p>
+                    <div class="byline">
+                        <span class="avatar avatar-sm">@UiHelpers.Initial(author)</span>
+                        <span>by <strong>@author</strong></span>
+                    </div>
+                </a>
             </li>
         }
     </ul>

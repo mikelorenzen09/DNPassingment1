@@ -5,52 +5,75 @@
 
 <PageTitle>Post</PageTitle>
 
+<a class="back-link" href="posts">&larr; All posts</a>
+
 @if (errorMessage is not null)
 {
-    <p class="text-danger">@errorMessage</p>
+    <div class="alert-error">@errorMessage</div>
 }
 else if (post is null)
 {
-    <p>Loading...</p>
+    <p class="loading">Loading post...</p>
 }
 else
 {
-    <h1>@post.Title</h1>
-    <p class="text-muted">by @authorName</p>
-    <p>@post.Body</p>
+    <article class="post-article">
+        <h1><span class="page-title">@post.Title</span></h1>
+        <div class="byline">
+            <span class="avatar">@UiHelpers.Initial(authorName)</span>
+            <span>Written by <strong>@authorName</strong></span>
+        </div>
+        <div class="post-body">@post.Body</div>
+    </article>
 
-    <h3>Comments</h3>
+    <h3 class="section-title">
+        Comments
+        <span class="count">(@(comments?.Count ?? 0))</span>
+    </h3>
+
     @if (comments is null || comments.Count == 0)
     {
-        <p>No comments yet.</p>
+        <div class="empty-state mb-4">
+            <strong>No comments yet</strong>
+            Start the conversation.
+        </div>
     }
     else
     {
-        <ul class="list-group mb-3">
+        <ul class="comment-list">
             @foreach (CommentDto comment in comments)
             {
-                <li class="list-group-item">
-                    <strong>@GetAuthorName(comment.UserID):</strong> @comment.Body
+                string commenter = GetAuthorName(comment.UserID);
+                <li class="comment">
+                    <span class="avatar avatar-sm">@UiHelpers.Initial(commenter)</span>
+                    <div>
+                        <div class="comment-author">@commenter</div>
+                        <p class="comment-body">@comment.Body</p>
+                    </div>
                 </li>
             }
         </ul>
     }
 
-    <h4>Add a comment</h4>
     <AuthorizeView>
         <NotAuthorized>
-            <p><a href="login">Log in</a> to add a comment.</p>
+            <div class="panel">
+                <a href="login">Log in</a> to add a comment.
+            </div>
         </NotAuthorized>
         <Authorized>
-            <div class="mb-3">
-                <textarea class="form-control" @bind="newCommentBody"></textarea>
-            </div>
-            <button class="btn btn-primary" @onclick="AddComment">Add comment</button>
+            <div class="panel">
+                <label>Add a comment</label>
+                <textarea class="form-control" rows="3" @bind="newCommentBody" placeholder="Share your thoughts..."></textarea>
+                <div class="form-actions">
+                    <button class="btn btn-primary" @onclick="AddComment">Post comment</button>
+                </div>
 
-            @if (!string.IsNullOrEmpty(commentError))
-            {
-                <p class="text-danger mt-3">@commentError</p>
-            }
+                @if (!string.IsNullOrEmpty(commentError))
+                {
+                    <div class="alert-error">@commentError</div>
+                }
+            </div>
         </Authorized>
     </AuthorizeView>
 }

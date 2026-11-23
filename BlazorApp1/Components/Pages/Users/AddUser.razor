@@ -4,23 +4,33 @@
 
 <PageTitle>Add User</PageTitle>
 
-<h1>Add User</h1>
-
-<div class="mb-3">
-    <label>Username</label>
-    <input class="form-control" @bind="username"/>
-</div>
-<div class="mb-3">
-    <label>Password</label>
-    <input type="password" class="form-control" @bind="password"/>
+<div class="page-header">
+    <div>
+        <h1><span class="page-title">Add user</span></h1>
+        <p class="lede">Create a new account that can log in and post.</p>
+    </div>
 </div>
 
-<button class="btn btn-primary" @onclick="Submit">Create user</button>
+<div class="panel form-panel">
+    <div class="mb-3">
+        <label>Username</label>
+        <input class="form-control" @bind="username" placeholder="e.g. jane"/>
+    </div>
+    <div class="mb-3">
+        <label>Password</label>
+        <input type="password" class="form-control" @bind="password" placeholder="Choose a password"/>
+    </div>
 
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-    <p class="text-danger mt-3">@errorMessage</p>
-}
+    <div class="form-actions">
+        <button class="btn btn-primary" @onclick="Submit">Create user</button>
+        <a class="btn btn-ghost" href="posts">Cancel</a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert-error">@errorMessage</div>
+    }
+</div>
 
 @code {
     private string username = "";

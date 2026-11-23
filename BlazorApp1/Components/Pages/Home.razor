@@ -2,15 +2,36 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="home-intro">
+    <AuthorizeView>
+        <Authorized>
+            <h1><span class="page-title">Welcome back, @context.User.Identity?.Name</span></h1>
+            <p class="lede">Pick up where the conversation left off, or start a new post.</p>
+        </Authorized>
+        <NotAuthorized>
+            <h1><span class="page-title">Hello, world!</span></h1>
+            <p class="lede">This is my new assignment: a small board for posts and comments. Anyone can read. <a href="login">Log in</a> to write posts and comment.</p>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
 
-this is my new assignment!
-
-<AuthorizeView>
-    <Authorized>
-        <p>Welcome back, @context.User.Identity?.Name!</p>
-    </Authorized>
-    <NotAuthorized>
-        <p>You are not logged in. <a href="login">Log in</a> to create posts and comments.</p>
-    </NotAuthorized>
-</AuthorizeView>
+<ul class="home-links">
+    <li>
+        <a href="posts">
+            <strong>Read posts</strong>
+            <span>Everything written so far</span>
+        </a>
+    </li>
+    <li>
+        <a href="posts/create">
+            <strong>Write a post</strong>
+            <span>Requires logging in</span>
+        </a>
+    </li>
+    <li>
+        <a href="users/add">
+            <strong>Add a user</strong>
+            <span>Register a new account</span>
+        </a>
+    </li>
+</ul>
