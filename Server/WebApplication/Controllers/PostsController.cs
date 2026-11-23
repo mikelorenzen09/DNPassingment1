@@ -1,6 +1,7 @@
 using ApiContracts;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace WebApplication.Controllers;
@@ -62,7 +63,7 @@ public class PostsController : ControllerBase
 
     // GET /Posts?title=someText&authorId=1&authorName=someText
     [HttpGet]
-    public ActionResult<IEnumerable<PostDto>> GetMany(
+    public async Task<ActionResult<IEnumerable<PostDto>>> GetMany(
         [FromQuery] string? title,
         [FromQuery] int? authorId,
         [FromQuery] string? authorName)
@@ -81,15 +82,15 @@ public class PostsController : ControllerBase
 
         if (!string.IsNullOrEmpty(authorName))
         {
-            List<int> matchingUserIds = userRepository.GetMany()
+            List<int> matchingUserIds = await userRepository.GetMany()
                 .Where(u => u.Username.Contains(authorName))
                 .Select(u => u.UserID)
-                .ToList();
+                .ToListAsync();
 
             posts = posts.Where(p => matchingUserIds.Contains(p.UserID));
         }
 
-        List<PostDto> dtos = posts.Select(ToDto).ToList();
+        List<PostDto> dtos = await posts.Select(p => ToDto(p)).ToListAsync();
 
         return Ok(dtos);
     }
@@ -103,9 +104,9 @@ public class PostsController : ControllerBase
 
     // GET /Posts/{id}/comments - nested route for the comments belonging to a post
     [HttpGet("{id}/comments")]
-    public ActionResult<IEnumerable<CommentDto>> GetCommentsForPost(int id)
+    public async Task<ActionResult<IEnumerable<CommentDto>>> GetCommentsForPost(int id)
     {
-        List<CommentDto> dtos = commentRepository.GetMany()
+        List<CommentDto> dtos = await commentRepository.GetMany()
             .Where(c => c.PostID == id)
             .Select(c => new CommentDto
             {
@@ -114,7 +115,7 @@ public class PostsController : ControllerBase
                 UserID = c.UserID,
                 PostID = c.PostID
             })
-            .ToList();
+            .ToListAsync();
 
         return Ok(dtos);
     }

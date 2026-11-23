@@ -1,6 +1,7 @@
 using ApiContracts;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace WebApplication.Controllers;
@@ -55,7 +56,7 @@ public class UsersController : ControllerBase
 
     // GET /Users?username=someText
     [HttpGet]
-    public ActionResult<IEnumerable<UserDto>> GetMany([FromQuery] string? username)
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetMany([FromQuery] string? username)
     {
         IQueryable<User> users = userRepository.GetMany();
 
@@ -64,7 +65,7 @@ public class UsersController : ControllerBase
             users = users.Where(u => u.Username.Contains(username));
         }
 
-        List<UserDto> dtos = users.Select(ToDto).ToList();
+        List<UserDto> dtos = await users.Select(u => ToDto(u)).ToListAsync();
 
         return Ok(dtos);
     }

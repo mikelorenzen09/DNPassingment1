@@ -1,6 +1,7 @@
 using ApiContracts;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace WebApplication.Controllers;
@@ -17,10 +18,10 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public ActionResult<UserDto> Login([FromBody] LoginRequest request)
+    public async Task<ActionResult<UserDto>> Login([FromBody] LoginRequest request)
     {
-        User? user = userRepository.GetMany()
-            .SingleOrDefault(u => u.Username == request.Username);
+        User? user = await userRepository.GetMany()
+            .SingleOrDefaultAsync(u => u.Username == request.Username);
 
         if (user is null)
         {
